@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import {rowMatrix,cameraPose,frustumSegments,poseText,intrinsicProjection} from './math.js';
+import {Vector3} from './vendor/three.module.js';
+const candidate={transform_query_to_map:[[0,0,1,10],[0,1,0,2],[-1,0,0,-3],[0,0,0,1]]};
+const frame={camera_to_session:[[1,0,0,1],[0,1,0,1],[0,0,1,-2],[0,0,0,1]]};
+const p=poseText(cameraPose(candidate,frame));
+assert.deepEqual(p.position,[8,3,-4]);
+assert.deepEqual(p.forward,[-1,0,0]);
+assert.equal(p.heading,-90);
+assert.throws(()=>rowMatrix([[1,0]]));
+const c={image_width:1920,image_height:1440,fx:1340,fy:1340,cx:960,cy:720};
+const lines=frustumSegments(c);
+assert.equal(lines.length,54);
+const ndc=new Vector3(0,0,-2).applyMatrix4(intrinsicProjection(c));
+assert(Math.abs(ndc.x)<1e-10&&Math.abs(ndc.y)<1e-10);
+console.log('Pose composition, row-major matrices, frustum and calibrated camera projection: passed.');

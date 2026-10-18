@@ -1,0 +1,56 @@
+# Local build caches, experiments, diagnostics and backend data.
+/work/
+
+# Generated deliverables and preview reports; source stays tracked.
+*.app/
+*.zip
+/outputs/Mac预览检查报告/
+
+# Xcode / Swift build products and personal IDE state.
+DerivedData/
+.build/
+.swiftpm/
+xcuserdata/
+*.xcuserstate
+*.dSYM/
+*.ipa
+
+# Real AR environments and capture libraries.
+*.arworldmap
+CampusNetworks/
+NetworkTrials/
+WorldMaps/
+Runs/
+PreviewRuns/
+PreviewExports/
+datasets/
+
+# Signing credentials and local secrets. Entitlements remain source-controlled.
+*.p12
+*.p8
+*.mobileprovision
+*.provisionprofile
+*.pem
+*.key
+.env
+.env.*
+!.env.example
+
+# OS / Python temporary files.
+.DS_Store
+__pycache__/
+*.py[cod]
+*.partial
+
+# LiDAR 验证数据与本地工具环境
+/GeometryTrials/
+/artifacts/
+/.venv/
+/report/
+*.ply
+*.npz
+*.f32
+*.u8
+
+.DS_Store
+.swiftpm/

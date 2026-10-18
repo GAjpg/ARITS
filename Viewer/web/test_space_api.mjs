@@ -1,0 +1,22 @@
+import assert from 'node:assert/strict';
+import {requestJSON,requestBinary,offlineMessage,restartedMessage} from './space_api.js';
+let connection;
+const onConnection=(status,message)=>connection={status,message};
+await assert.rejects(requestJSON('/import',{method:'POST'}, {connectionChanged:onConnection,fetchImpl:async()=>{throw new TypeError('Failed to fetch');}}),{message:offlineMessage});
+assert.deepEqual(connection,{status:'offline',message:offlineMessage});
+await assert.rejects(requestJSON('/import',{}, {connectionChanged:onConnection,fetchImpl:async()=>new Response('{"error":"请从查看器页面执行操作"}',{status:403})}),{message:restartedMessage});
+assert.equal(connection.status,'expired');
+await assert.rejects(requestJSON('/import',{}, {connectionChanged:onConnection,fetchImpl:async()=>new Response('{"error":"校准文件不属于这张地图"}',{status:400})}),{message:'校准文件不属于这张地图'});
+assert.equal(connection.status,'online');
+let calls=0;
+await assert.rejects(requestJSON('/import',{method:'POST'}, {fetchImpl:async()=>{calls++;throw Error('network reset');}}));
+assert.equal(calls,1,'Uploads must not retry automatically');
+const payload=await requestJSON('/catalog',{}, {token:'current-token',connectionChanged:onConnection,fetchImpl:async(url,options)=>{assert.equal(options.headers['X-Viewer-Token'],'current-token');return new Response('{"projects":[]}');}});
+assert.deepEqual(payload,{projects:[]});assert.equal(connection.status,'online');
+await assert.rejects(requestJSON('/catalog',{}, {fetchImpl:async()=>new Response('<html>error</html>')}),/异常响应/);
+console.log('Space API offline, restart, validation and no-retry checks passed.');
+
+const bytes=new Uint8Array([1,2,3,4]);assert.deepEqual(new Uint8Array(await requestBinary('/geometry',{fetchImpl:async()=>new Response(bytes)})),bytes);
+await assert.rejects(requestBinary('/geometry',{fetchImpl:async()=>new Response('',{status:404})}),/点云加载失败/);
+await assert.rejects(requestBinary('/geometry',{fetchImpl:async()=>{throw Error('offline');}}),{message:offlineMessage});
+console.log('Binary cloud loading shares connection failure handling: passed.');

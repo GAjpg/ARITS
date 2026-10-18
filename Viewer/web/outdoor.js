@@ -1,0 +1,63 @@
+import {requestJSON} from './space_api.js';
+const $=id=>document.getElementById(id), canvas=document.querySelector('canvas'),ctx=canvas.getContext('2d'),apiContext={token:document.querySelector('meta[name=viewer-token]').content};
+let campus,report,revision,selected=null,part=0,mode='select',drawing=[],hover=null,mergeFrom=null,history=[],future=[],dirty=false,busy=false,scale=1,cx=0,cy=0,width=1,height=1,pointer=null,timer;
+const clone=x=>structuredClone(x),rings=b=>b.parts??[b.ring];
+const rankOf=b=>b.rank??(/图书馆|行政中心|会议中心/.test(b.name??'')?5:(b.area??0)>8000?5:(b.area??0)>3000?4:(b.area??0)>1000?3:2);
+let latM=111000,lonM=95000;
+function local(p){return [(p[1]-campus.meta.origin[1])*lonM,-(p[0]-campus.meta.origin[0])*latM];}
+function geo(p){return [campus.meta.origin[0]-p[1]/latM,campus.meta.origin[1]+p[0]/lonM];}
+function screen(p){return [(p[0]-cx)*scale+width/2,(p[1]-cy)*scale+height/2];}
+function world(p){return [(p[0]-width/2)/scale+cx,(p[1]-height/2)/scale+cy];}
+function trace(points,closed=false){ctx.beginPath();points.forEach((p,i)=>{const q=screen(local(p));if(i)ctx.lineTo(...q);else ctx.moveTo(...q);});if(closed)ctx.closePath();}
+function message(text,error=false){clearTimeout(timer);$('message').textContent=text;$('message').className=error?'error':'';$('message').hidden=false;timer=setTimeout(()=>$('message').hidden=true,error?12000:5000);}
+async function api(path,body){return requestJSON('/api/outdoor/'+path,body?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}:{},apiContext);}
+function loadModel(d){campus=d;const p=campus.meta.origin[0]*Math.PI/180;latM=111132.92-559.82*Math.cos(2*p)+1.175*Math.cos(4*p);lonM=111412.84*Math.cos(p)-93.5*Math.cos(3*p);}
+function refresh(){
+ $('dirty').textContent=dirty?'有未保存修改':'已保存';$('undo').disabled=!history.length||busy;$('redo').disabled=!future.length||busy;
+ $('import').disabled=busy;$('bundled').disabled=busy;$('save').disabled=busy;$('export').disabled=busy||!report||report.components!==1;
+ $('summary').textContent=report?`${report.buildings} 栋楼 · ${report.multipart} 栋多部件楼\n${report.nodes} 路网点 · ${report.edges} 条边\n${report.components===1?'路网已连通':`路网分为 ${report.components} 块，导出前需连接`}`:'正在读取…';$('summary').style.whiteSpace='pre-line';
+ const b=campus?.buildings.find(b=>b.osm===selected),inDrawing=mode==='polygon'||mode==='path';
+ $('properties').hidden=!b||inDrawing;$('empty').hidden=!!b||inDrawing;$('drawing').hidden=!inDrawing;
+ if(b){$('name').value=b.name??'';$('short').value=b.short??'';$('rank').value=rankOf(b);$('identity').textContent=`${b.osm}\n${rings(b).length} 个部件 · 选中第 ${part+1} 个`;$('identity').style.whiteSpace='pre-line';$('split').disabled=rings(b).length<2;$('door-hint').textContent=(b.doors??[]).some(d=>d.source==='editor_suggested')?'新楼门口为根据路网生成的建议点，请在手机建图工具中核实实际门口。':'';}
+ $('drawing-title').textContent=mode==='polygon'?'逐点绘制楼栋':'逐点绘制步道';$('drawing-count').textContent=`已放置 ${drawing.length} 个点`;$('path-label').hidden=mode!=='path';$('finish').disabled=busy||drawing.length<(mode==='polygon'?3:2);
+ document.querySelectorAll('[data-mode]').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));
+ $('hint').textContent=mergeFrom?'点击要合并的第二栋楼；先选楼的编号和名称会保留。Esc 取消。':mode==='select'?'拖动移动，滚轮缩放；点击楼栋编辑。':'逐点点击，Enter 完成，Backspace 撤回一个点，Esc 取消；拖动仍可移动地图。';
+ const changes=campus?.meta.editor_changes??{},removed=(changes.removed_ids??[]).length,merged=Object.keys(changes.merged_into??{}).length;
+ $('changes').textContent=removed||merged?`已删除 ${removed} 个编号，合并移除 ${merged} 个编号。导入手机时请核实相关楼栋与入口绑定。`:'';draw();
+}
+function fit(){if(!campus)return;const all=[...campus.campusRing,...campus.buildings.flatMap(b=>rings(b).flat())].map(local),xs=all.map(p=>p[0]),ys=all.map(p=>p[1]);const x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys);cx=(x0+x1)/2;cy=(y0+y1)/2;scale=Math.min(width/(x1-x0+60),height/(y1-y0+60));draw();}
+function draw(){
+ ctx.clearRect(0,0,width,height);ctx.fillStyle='#eef1ec';ctx.fillRect(0,0,width,height);if(!campus)return;
+ for(const a of campus.areas??[]){trace(a.ring??[],true);ctx.fillStyle=a.k==='water'?'#cfe0e6':'#d9e4d3';ctx.fill();}
+ trace(campus.campusRing,true);ctx.strokeStyle='#9dbf94';ctx.lineWidth=1.5;ctx.stroke();
+ for(const r of campus.roads??[]){trace(r.p??[]);ctx.strokeStyle='white';ctx.lineWidth=Math.max(1.5,3*scale);ctx.lineCap='round';ctx.stroke();}
+ if($('graph').checked){ctx.strokeStyle='#7b98be77';ctx.lineWidth=1;ctx.beginPath();for(const e of campus.graph.edges){ctx.moveTo(...screen(local(campus.graph.nodes[e[0]])));ctx.lineTo(...screen(local(campus.graph.nodes[e[1]])));}ctx.stroke();if(scale>1.5){ctx.fillStyle='#4b72a9';for(const p of campus.graph.nodes){const q=screen(local(p));ctx.beginPath();ctx.arc(...q,2,0,Math.PI*2);ctx.fill();}}}
+ for(const b of campus.buildings){rings(b).forEach((r,index)=>{trace(r,true);ctx.fillStyle=b.osm===selected?'#bdd0f5':'#dce1e6';ctx.fill();ctx.strokeStyle=b.osm===selected&&index===part?'#1d4ed8':'#b8c2cb';ctx.lineWidth=b.osm===selected&&index===part?2.5:1;ctx.stroke();});}
+ const occupied=[];ctx.textAlign='center';ctx.textBaseline='middle';
+ for(const b of [...campus.buildings].sort((a,b)=>rankOf(b)-rankOf(a))){const rank=rankOf(b);if(scale<.55&&rank<4&&selected!==b.osm)continue;if(scale<1&&rank<3&&selected!==b.osm)continue;const q=screen(local(b.centroid)),text=(scale>1.6?b.name:b.short||b.name)||'';if(!text)continue;ctx.font=`${selected===b.osm?'bold ':''}12px -apple-system,sans-serif`;const w=ctx.measureText(text).width+8,box=[q[0]-w/2,q[1]-9,q[0]+w/2,q[1]+9];if(selected!==b.osm&&occupied.some(r=>box[0]<r[2]&&box[2]>r[0]&&box[1]<r[3]&&box[3]>r[1]))continue;occupied.push(box);ctx.lineWidth=3;ctx.strokeStyle='#eef1ecee';ctx.strokeText(text,...q);ctx.fillStyle=selected===b.osm?'#1e3a8a':'#67737c';ctx.fillText(text,...q);}
+ if(drawing.length){const pts=drawing.map(p=>screen(local(p)));ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(...p):ctx.moveTo(...p));if(hover)ctx.lineTo(...hover);if(mode==='polygon'){ctx.closePath();ctx.fillStyle='#1d4ed81a';ctx.fill();}ctx.strokeStyle='#1d4ed8';ctx.lineWidth=2.5;ctx.setLineDash([6,4]);ctx.stroke();ctx.setLineDash([]);for(const p of pts){ctx.beginPath();ctx.arc(...p,4,0,Math.PI*2);ctx.fillStyle='#1d4ed8';ctx.fill();}}
+ const meters=Math.pow(10,Math.floor(Math.log10(100/scale))),m=100/scale/meters>5?5*meters:100/scale/meters>2?2*meters:meters;$('scale').textContent=`${m} 米`;$('scale').style.width=`${m*scale}px`;
+}
+function hit(p){for(const b of [...campus.buildings].reverse()){for(let index=rings(b).length-1;index>=0;index--){trace(rings(b)[index],true);if(ctx.isPointInPath(p[0]*(devicePixelRatio||1),p[1]*(devicePixelRatio||1)))return {id:b.osm,part:index};}}return null;}
+async function change(operation){if(busy)return;busy=true;refresh();try{const next=await api('edit',{campus,operation});history.push({campus:clone(campus),report:clone(report)});if(history.length>40)history.shift();future=[];loadModel(next.campus);report=next.report;dirty=true;selected=campus.buildings.some(b=>b.osm===selected)?selected:null;if(operation.kind==='add_building'){selected=campus.buildings.at(-1).osm;part=0;}if(operation.kind==='split'){selected=campus.buildings.at(-1).osm;part=0;}if(operation.kind==='merge')part=0;drawing=[];mode='select';mergeFrom=null;}catch(e){message(e.message,true);}finally{busy=false;refresh();}}
+function chooseMode(value){mode=value;drawing=[];mergeFrom=null;hover=null;refresh();}
+function undo(redo=false){const from=redo?future:history,to=redo?history:future;if(!from.length||busy)return;to.push({campus:clone(campus),report:clone(report)});const s=from.pop();loadModel(s.campus);report=s.report;dirty=true;selected=null;drawing=[];refresh();}
+function finish(){if(drawing.length<(mode==='polygon'?3:2)||busy)return;change(mode==='polygon'?{kind:'add_building',ring:drawing}:{kind:'path',points:drawing,name:$('path-name').value});}
+function zoom(k,anchor=[width/2,height/2]){const p=world(anchor);scale=Math.max(.04,Math.min(12,scale*k));cx=p[0]-(anchor[0]-width/2)/scale;cy=p[1]-(anchor[1]-height/2)/scale;draw();}
+const resize=new ResizeObserver(()=>{const r=canvas.getBoundingClientRect();width=r.width;height=r.height;const d=devicePixelRatio||1;canvas.width=Math.round(width*d);canvas.height=Math.round(height*d);ctx.setTransform(d,0,0,d,0,0);draw();});resize.observe(canvas);
+canvas.addEventListener('pointerdown',e=>{if(!campus||busy)return;canvas.focus();canvas.setPointerCapture(e.pointerId);pointer={id:e.pointerId,x:e.offsetX,y:e.offsetY,startX:e.offsetX,startY:e.offsetY,moved:false};});
+canvas.addEventListener('pointermove',e=>{hover=[e.offsetX,e.offsetY];if(pointer){const dx=e.offsetX-pointer.x,dy=e.offsetY-pointer.y;pointer.moved ||=Math.hypot(e.offsetX-pointer.startX,e.offsetY-pointer.startY)>4;if(pointer.moved){cx-=dx/scale;cy-=dy/scale;}pointer.x=e.offsetX;pointer.y=e.offsetY;}draw();});
+canvas.addEventListener('pointerup',e=>{const p=pointer;pointer=null;if(!p||p.moved||busy)return;const q=[e.offsetX,e.offsetY];if(mode==='polygon'||mode==='path'){drawing.push(geo(world(q)));refresh();return;}const h=hit(q);if(mergeFrom&&h&&h.id!==mergeFrom){if(confirm('合并两栋楼？保留先选楼的编号和属性；另一编号的绑定需重新核实。'))change({kind:'merge',primary:mergeFrom,secondary:h.id});return;}selected=h?.id??null;part=h?.part??0;refresh();});
+canvas.addEventListener('pointercancel',()=>pointer=null);canvas.addEventListener('wheel',e=>{e.preventDefault();zoom(Math.exp(-e.deltaY*.0015),[e.offsetX,e.offsetY]);},{passive:false});
+window.addEventListener('keydown',e=>{if(/INPUT|SELECT|TEXTAREA/.test(e.target.tagName))return;if(e.key==='Escape')chooseMode('select');if(e.key==='Enter'){e.preventDefault();finish();}if(e.key==='Backspace'&&drawing.length){e.preventDefault();drawing.pop();refresh();}if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='z'){e.preventDefault();undo(e.shiftKey);}});
+window.addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue='';}});
+document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>chooseMode(b.dataset.mode));$('undo').onclick=()=>undo();$('redo').onclick=()=>undo(true);$('fit').onclick=fit;$('plus').onclick=()=>zoom(1.4);$('minus').onclick=()=>zoom(1/1.4);$('graph').onchange=draw;$('finish').onclick=finish;$('cancel').onclick=()=>chooseMode('select');
+$('properties').onsubmit=e=>{e.preventDefault();change({kind:'properties',id:selected,name:$('name').value,short:$('short').value,rank:Number($('rank').value)});};
+$('delete').onclick=()=>{if(confirm('删除这栋楼？相关手机绑定需重新核实。'))change({kind:'delete',id:selected});};$('merge').onclick=()=>{mergeFrom=selected;refresh();};$('split').onclick=()=>{if(confirm('将选中部件拆为独立楼栋并分配新编号？'))change({kind:'split',id:selected,part});};
+async function replaceDraft(value){history.push({campus:clone(campus),report:clone(report)});future=[];loadModel(value.campus);report=value.report;dirty=true;selected=null;chooseMode('select');fit();}
+$('import').onclick=()=>{if(!dirty||confirm('导入另一张地图？当前未保存修改可通过撤销恢复。'))$('file').click();};
+$('file').onchange=async()=>{const f=$('file').files[0];if(!f||busy)return;busy=true;refresh();try{if(f.size>32*1024*1024)throw Error('文件超过32MB');const body=new FormData();body.append('file',f);await replaceDraft(await requestJSON('/api/outdoor/import',{method:'POST',body},apiContext));message('已载入草稿；保存或导出后保留修改。');}catch(e){message(e.message,true);}finally{$('file').value='';busy=false;refresh();}};
+$('bundled').onclick=async()=>{if(busy)return;if(dirty&&!confirm('载入内置地图？当前修改可通过撤销恢复。'))return;busy=true;refresh();try{await replaceDraft(await api('bundled'));}catch(e){message(e.message,true);}finally{busy=false;refresh();}};
+$('save').onclick=async()=>{if(busy)return;busy=true;refresh();try{const r=await api('save',{campus,revision});loadModel(r.campus);report=r.report;revision=r.revision;dirty=false;message('工作副本已保存在本机。');}catch(e){message(e.message,true);}finally{busy=false;refresh();}};
+$('export').onclick=async()=>{if(busy)return;busy=true;refresh();try{const response=await fetch('/api/outdoor/export',{method:'POST',headers:{'Content-Type':'application/json','X-Viewer-Token':apiContext.token},body:JSON.stringify({campus})});if(!response.ok){const d=await response.json();throw Error(d.error||'导出失败');}const blob=await response.blob(),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='campus.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);message('已导出完整地图，手机从“设置 → 校园地图数据”导入。');}catch(e){message(e.message==='Failed to fetch'?'无法连接工作台，请确认服务仍在运行。':e.message,true);}finally{busy=false;refresh();}};
+try{const s=await api('state');revision=s.revision;loadModel(s.campus);report=s.report;refresh();fit();}catch(e){message(e.message,true);}

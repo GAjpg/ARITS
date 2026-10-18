@@ -1,0 +1,18 @@
+import assert from 'node:assert/strict';
+import {decodeRLE,worldToCell,cellCenter,calibratedAt} from './space_math.js';
+const b64=values=>Buffer.from(values).toString('base64');
+assert.deepEqual([...decodeRLE(b64([1,2,0,3]),3,2)],[0,1,1,1,1,1]);
+assert.equal(decodeRLE(b64([200,1]),200,1).reduce((a,b)=>a+b),0);
+assert.equal(decodeRLE(b64([0,200,1]),200,1).reduce((a,b)=>a+b),200);
+for(const v of [[1,1],[3,9],[1,0,2],[128],[0,0,3]])assert.throws(()=>decodeRLE(b64(v),3,1));
+assert.throws(()=>decodeRLE('@@@',3,1));
+assert.throws(()=>decodeRLE('AQID',4000,4000));
+const g={origin_x:-2,origin_z:-1,cell_m:.1,width:40,height:20};
+assert.deepEqual(worldToCell(g,-1.95,-.95),{i:0,j:0,index:0});
+assert.equal(worldToCell(g,-2.05,0),null);
+assert.equal(worldToCell(g,2,0),null);
+assert.deepEqual(cellCenter(g,0,0),[-1.95,-.95]);
+assert.equal(calibratedAt(g,-1.95,-.95),true);
+assert.equal(calibratedAt(g,2,0),false);
+assert.equal(calibratedAt(null,0,0),false);
+console.log('Space display codec and negative-origin/coverage checks passed.');

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="viewer-token" content="__VIEWER_TOKEN__"><title>通行空间工作台 · 实验</title><link rel="stylesheet" href="/assets/space.css"></head>
+<body>
+<header><div><a class="back" href="/">← 点云检查</a><a href="/outdoor" style="margin-right:14px">校园地图编辑</a><h1>通行空间 <span>实验工作台</span></h1></div><div class="header-actions"><span id="saveState" class="save-state">尚未加载</span><button id="save" disabled>保存校准</button><button id="export" disabled>导出校准文件 ↓</button></div></header>
+<div id="connectionWarning" class="connection-warning" role="alert" hidden><span id="connectionMessage"></span><button id="reconnect">刷新连接</button></div>
+<main>
+<aside class="left">
+  <p class="eyebrow">01 / 编辑通行空间</p>
+  <div class="tools" id="tools"><button data-tool="pan" class="active" title="拖动平移；空格可临时平移">✥ 移动</button><button data-tool="green">● 涂绿</button><button data-tool="white">○ 涂白</button><button data-tool="path">⌁ 画路径</button><button data-tool="select">◇ 改路径</button></div>
+  <label class="field">画笔直径 <output id="brushValue">1.0 m</output><input id="brushSize" aria-label="画笔直径" type="range" min="0.2" max="8" step="0.1" value="1"></label>
+  <div class="button-row"><button id="undo" disabled>撤销</button><button id="redo" disabled>重做</button></div>
+  <p id="toolHelp" class="note">点击“涂绿”或“涂白”，在图上按住鼠标拖动。滚轮缩放，空格拖动平移。</p>
+  <section class="cloud-controls" aria-label="点云参考与画笔保护">
+  <label class="check"><input id="showCloud" type="checkbox" checked> 显示原始点云（墙体参考）</label>
+  <label class="field">点云不透明度 <output id="cloudOpacityValue">80%</output><input id="cloudOpacity" aria-label="点云不透明度" type="range" min="10" max="100" step="5" value="80"></label>
+  <label class="field">点云高度<select id="cloudBand"><option value="structure">墙体 / 结构（离地 0.4–2.6 m）</option><option value="all">全部高度（含地面与天花板）</option></select></label>
+  <label class="check"><input id="guardBrush" type="checkbox" checked> 墙体挡住画笔</label>
+  <p id="cloudStatus" class="note">等待加载原始点云。</p>
+  <p class="note">从墙框内部起笔，笔刷会被墙线遮挡。墙线缺口可能漏出；误挡时关闭保护。点云也包含家具，仅作参考。</p>
+  </section>
+  <details class="floor-controls"><summary>地面高度辅助涂绿</summary>
+  <p id="floorReference" class="note">相对估计地面高度，单位为米。</p>
+  <div class="height-inputs"><label>下限<input id="floorMin" aria-label="地面高度下限" type="number" min="-2" max="2" step="0.05" value="-0.15"></label><label>上限<input id="floorMax" aria-label="地面高度上限" type="number" min="-2" max="2" step="0.05" value="0.15"></label></div>
+  <div class="button-row"><button id="previewFloor">预览地面</button><button id="clearFloor">关闭预览</button></div><button id="applyFloor" disabled>将预览补涂为可走</button>
+  <p id="floorStatus" class="note">蓝色为高度命中的地面预览。确认后才补涂绿色，可一键撤销，不清除其他绿区。范围过高会选到家具。</p>
+  </details>
+  <p class="eyebrow">02 / 地图版本</p><label class="upload" for="mapFile"><b>＋ 导入地图 ZIP</b><span>原文件保持不变</span></label><input id="mapFile" type="file" accept=".zip" hidden>
+  <label class="field">工作副本<select id="projects"><option value="">先导入一份地图</option></select></label>
+  <div id="projectInfo" class="note">支持新建与补采后的地图。不同几何版本分别保留。</div>
+  <p class="eyebrow">03 / 通行空间校准</p><button id="importCalibration" disabled>加载校准 JSON</button><input id="calibrationFile" type="file" accept=".json" hidden>
+  <p class="note">只替换本机工作副本。导出后在手机导入，不需要重新打包点云。</p>
+  <div id="calibrationState" class="status">尚未加载地图</div>
+  <details class="layer-options"><summary>显示图层</summary>
+  <label class="field">通行空间<select id="layer"><option value="effective">最终可走（包含建议路径）</option><option value="base">基础可走（路径下方原判定）</option><option value="auto">自动判断</option><option value="observed_floor">地面观测</option><option value="walked">行走轨迹证据</option><option value="hole_filled">小洞补全</option></select></label>
+  <label class="check"><input id="showObstacles" type="checkbox" checked> 障碍证据（参考）</label>
+  <label class="check"><input id="showCoverage" type="checkbox" checked> 校准边界与未校准区</label>
+  <label class="check"><input id="showPaths" type="checkbox" checked> 建议通行路径</label>
+  <label class="check"><input id="showLegacy" type="checkbox" checked> 旧路网参考线</label>
+  <label class="check"><input id="showNodes" type="checkbox" checked> 语义点</label>
+  <div class="legend"><span><i class="green"></i>可走</span><span><i class="white"></i>不可走 / 未观察</span><span><i class="dark"></i>障碍证据</span><span><i class="orange"></i>未校准</span><span><i class="purple"></i>建议路径</span></div>
+  </details><p class="note">第一次涂改以当前基础层为底图，整张画布成为校准范围；白格也会保存。建议路径独立叠加，优先于绿白。</p>
+</aside>
+<section class="stage"><div class="toolbar"><div><button id="fit">适配全图</button><button id="zoomIn" aria-label="放大">＋</button><button id="zoomOut" aria-label="缩小">−</button></div><button id="toggleInspector" aria-expanded="false" aria-controls="inspector">路径 / 预览</button><span id="gridInfo">10 cm 栅格 · 地图坐标</span></div>
+<div id="viewport"><canvas id="mapCanvas" tabindex="0" aria-label="通行空间二维地图"></canvas><div id="empty"><span>⌖</span><h2>把地图变成看得见的通行空间</h2><p>导入手机地图，检查地面、障碍和建议路径<br>再加载或导出这张地图的校准文件</p></div><div class="axis">X → &nbsp; Z ↓<br><span>不代表地理北方</span></div></div>
+<div id="pathDraftBar" class="draft-bar" hidden><span id="draftCount">正在画路径</span><button id="finishPath">完成路径 ↵</button><button id="cancelPath">取消 Esc</button></div>
+<footer><span id="cursor">拖动平移 · 滚轮缩放 · 点击语义点</span><span id="scale">—</span></footer>
+</section>
+<aside class="right" id="inspector"><button id="closeInspector">关闭面板 ×</button><p class="eyebrow">当前工作副本</p><h2 id="mapTitle">等待导入</h2><div id="stats" class="stats"></div><div id="warnings"></div>
+<p class="eyebrow">建议通行路径</p><div id="pathList" class="path-list"></div>
+<div id="pathControls" hidden><label class="field">选中路径总宽度<select id="pathWidth"><option value="0.3">0.3 m</option><option value="0.6" selected>0.6 m</option><option value="1">1.0 m</option><option value="1.5">1.5 m</option><option value="2">2.0 m</option></select></label><div class="button-row"><button id="insertVertex">插入点</button><button id="removeVertex">删顶点</button></div><button id="deletePath" class="danger">删除整条路径</button><p class="note">拖动顶点调整位置。选择顶点后可在它后面插入点。</p></div>
+<p class="eyebrow">路线预览</p><div class="button-row"><button data-tool="start">设置起点</button><button data-tool="end">设置终点</button></div><label class="field">起点<select id="routeStart"><option value="">在图上选起点…</option></select></label><label class="field">终点<select id="routeEnd"><option value="">在图上选终点…</option></select></label><div id="routeStatus" class="status">选择两个位置，预览通行路线。</div><button id="clearRoute" class="quiet">清除预览</button><p class="eyebrow">语义点</p><p class="note">点击名称可定位到图中。普通路点保留为旧路线资料。</p><div id="nodeList" class="node-list"></div><p class="eyebrow">选中位置</p><div id="selection" class="note">在地图上点击查看坐标、通行判定和校准状态。</div><details><summary>校准如何生效</summary><p>校准矩形内部的绿色和白色都是最终结果。矩形外使用自动判断，并标为未校准。</p><p>建议路径独立叠加，优先于绿白判定；关闭其显示不改变规划规则。</p><p>没有校准栅格时，整个地图都使用自动判断。单独存在建议路径不算已校准。</p></details></aside>
+</main><dialog id="confirmDialog"><h2>确认操作</h2><p id="confirmText"></p><div class="button-row"><button id="confirmCancel">取消</button><button id="confirmAccept">继续</button></div></dialog><div id="notice" role="status">准备就绪</div><script type="module" src="/assets/space.js"></script></body></html>
