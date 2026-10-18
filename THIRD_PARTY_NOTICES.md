@@ -34,6 +34,24 @@ The App uses Apple SDK APIs including ARKit, Vision, CoreLocation, CoreMotion, C
 
 ## Team contributions
 
-Outdoor Android reference code, campus data processing and elevator device/protocol work were supplied by project team members. This repository contains the current iOS integration and local workbench; it does not include a historical Android APK, decompiled project, or separate device firmware. Development used Codex and Claude as programming and review aids.
+Outdoor Android reference code, campus data processing and elevator device/protocol work were supplied by project team members. This repository contains the current iOS integration, local workbench, and the teammate-supplied elevator Android App and ESP32 source under `Hardware/Elevator/`. It does not include historical APKs, decompiled projects, or the separate outdoor Android navigation project. Development used Codex and Claude as programming and review aids.
 
 No blanket open-source license has been assigned here to the team's own source. This notice does not replace or override third-party rights and licenses.
+
+## Elevator hardware module dependencies
+
+`Hardware/Elevator/` retains the teammate-supplied source and its build declarations. The Android project declares Android Gradle Plugin 8.5.2, Kotlin 1.9.24, Gradle wrapper 8.7, AndroidX core-ktx 1.13.1, appcompat 1.7.0, constraintlayout 2.1.4, recyclerview 1.3.2, and Material Components 1.12.0. Library and build-tool sources/notices are available upstream:
+
+- AndroidX: https://android.googlesource.com/platform/frameworks/support/
+- Material Components: https://github.com/material-components/material-components-android
+- Kotlin: https://github.com/JetBrains/kotlin
+- Android Gradle Plugin: https://android.googlesource.com/platform/tools/base/
+- Gradle: https://github.com/gradle/gradle ; the bundled wrapper JAR retains its embedded META-INF/LICENSE.
+
+ESP32 sketches include BLEDevice/BLEServer/BLEUtils/BLE2902, Preferences and FreeRTOS interfaces supplied by the selected Arduino-ESP32 platform. No platform version is pinned in the supplied package. Install the board support package separately and retain the licenses applicable to that version and its components:
+
+- Arduino-ESP32: https://github.com/espressif/arduino-esp32
+- ESP-IDF: https://github.com/espressif/esp-idf
+- FreeRTOS: https://github.com/FreeRTOS/FreeRTOS-Kernel
+
+These external SDKs, libraries and installed toolchains are not included as team-authored source. The optional chime node is marked untested in its original source. Import checks are not a hardware validation claim.

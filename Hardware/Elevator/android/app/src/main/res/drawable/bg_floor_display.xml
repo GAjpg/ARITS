@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 像真实电梯轿厢里的层显：深色面板 + 内描边 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/display_bg" />
+    <stroke
+        android:width="2dp"
+        android:color="@color/display_border" />
+    <corners android:radius="16dp" />
+</shape>

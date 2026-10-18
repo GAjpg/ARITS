@@ -1,0 +1,247 @@
+{
+  "source_archive": "最终代码_固件与App_v1(1).zip",
+  "archive_sha256": "c4ac9eb1e7e9102ab83d8a8859b394d549734cec6dcaa1b597423f77a9717453",
+  "supplied_by": "本队电梯交互硬件负责成员",
+  "import_date": "2026-10-18",
+  "original_files_preserved": true,
+  "executable_permission_set": [
+    "android/gradlew"
+  ],
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 2438,
+      "sha256": "74fe5c071a99d4498ba2407b89e1ae5b0c65813d50f1d3626eb901b61abde06e"
+    },
+    {
+      "path": "android/build.gradle.kts",
+      "bytes": 164,
+      "sha256": "ba74bc9c5621460c919f6afb7553888efbc642d3503a10d1dd53f33e5fc9ee25"
+    },
+    {
+      "path": "android/gradle.properties",
+      "bytes": 566,
+      "sha256": "e8def1536dfcb487b77b585e12016f66aa9d69c16797580cb19c9bee9613f855"
+    },
+    {
+      "path": "android/gradlew",
+      "bytes": 8714,
+      "sha256": "bf2ca3f9d7c42b831380b47ab9e7594ddc33054b3e09253a0c4862353d5d604b"
+    },
+    {
+      "path": "android/gradlew.bat",
+      "bytes": 2848,
+      "sha256": "e54283c0f86074fa408c1161d08ef8f63992323a8c940c66f3626e8abc5bd8cc"
+    },
+    {
+      "path": "android/settings.gradle.kts",
+      "bytes": 333,
+      "sha256": "2e575d398691d7afcf5298affe97d8f39a18cba382118d479ca35e1dad50f8e9"
+    },
+    {
+      "path": "android/app/build.gradle.kts",
+      "bytes": 1136,
+      "sha256": "e830bac1f3f730a16c2ada8a6e015a4ffd54ee3950b36c729818bee36fcf2910"
+    },
+    {
+      "path": "android/app/proguard-rules.pro",
+      "bytes": 48,
+      "sha256": "d83521be2b68a96ee416c564e157c67293dd59aada29351a2567851d3efd4278"
+    },
+    {
+      "path": "android/app/src/main/AndroidManifest.xml",
+      "bytes": 2624,
+      "sha256": "c83a22b60f485df15eb859a08b18e9ab3c5645dba5d10d8bbaf3324c9d8b6b84"
+    },
+    {
+      "path": "android/app/src/main/java/com/hackathon/elevator/BleManager.kt",
+      "bytes": 17918,
+      "sha256": "ad67cbec787e81f8823f00e8114dc626a7630a1ed62afebcf96077ce2ebbb596"
+    },
+    {
+      "path": "android/app/src/main/java/com/hackathon/elevator/CameraFloorActivity.kt",
+      "bytes": 19706,
+      "sha256": "8d31ad7c8149c14029c029c4d4957646d015cdac2e17d1f0b3a3815b3157a169"
+    },
+    {
+      "path": "android/app/src/main/java/com/hackathon/elevator/CarFloorSource.kt",
+      "bytes": 6019,
+      "sha256": "d8e6f3bed39cfe0e23b82625198aa5d3339cb9b8d10f59bb8aa170f6dfeb72a5"
+    },
+    {
+      "path": "android/app/src/main/java/com/hackathon/elevator/DotMatrixReader.kt",
+      "bytes": 10562,
+      "sha256": "0a9a92ceedc5f6c84a44127a2846e416972cb8a75210f9836352f8797558a794"
+    },
+    {
+      "path": "android/app/src/main/java/com/hackathon/elevator/ElevatorDevice.kt",
+      "bytes": 3007,
+      "sha256": "7a744a9b876dce818003a0cb2a59029bf57223c39e9b444360d2316cc118d7a9"
+    },
+    {
+      "path": "android/app/src/main/java/com/hackathon/elevator/ElevatorView.kt",
+      "bytes": 31598,
+      "sha256": "3e58c7247516e1ce6f792c18a041cc5ee13a12c239d5a74d9c40fbc105d0c035"
+    },
+    {
+      "path": "android/app/src/main/java/com/hackathon/elevator/FloorJudge.kt",
+      "bytes": 3668,
+      "sha256": "aad16f33dc0b9983d6efaf9c25118af6b1ffdb41c66c88d9939399df323d1f2f"
+    },
+    {
+      "path": "android/app/src/main/java/com/hackathon/elevator/LedFrameFusion.kt",
+      "bytes": 5223,
+      "sha256": "9fed80ea37bdc7414eb85861c038c80d27c5569116515573c2bc060c9740f693"
+    },
+    {
+      "path": "android/app/src/main/java/com/hackathon/elevator/LocalApiServer.kt",
+      "bytes": 10648,
+      "sha256": "dc35795c47f3bb779114a822160eb38a341db956496931a08442a03e24d7c872"
+    },
+    {
+      "path": "android/app/src/main/java/com/hackathon/elevator/MainActivity.kt",
+      "bytes": 18684,
+      "sha256": "8fa8c5f41a7ce2318a4c58190dedb52a9f74e55ffe859aeff96f01593b9d8daa"
+    },
+    {
+      "path": "android/app/src/main/java/com/hackathon/elevator/MaskView.kt",
+      "bytes": 4226,
+      "sha256": "3edadd602fa803d38c11c7d53aff48ab0ce1d9e2cfdbf87b5dd9d9da31c4adb4"
+    },
+    {
+      "path": "android/app/src/main/java/com/hackathon/elevator/NavMapView.kt",
+      "bytes": 7470,
+      "sha256": "be6778c99dc9837cdff1bcaa54e760b06d9e59b9269c558149014e0bd838f08f"
+    },
+    {
+      "path": "android/app/src/main/java/com/hackathon/elevator/NavMockActivity.kt",
+      "bytes": 18194,
+      "sha256": "fce91e170cef4e0b3590a3ebe2cf0db5cc68698873eb543a6efe0f9cc4c53083"
+    },
+    {
+      "path": "android/app/src/main/java/com/hackathon/elevator/Nv21Redness.kt",
+      "bytes": 4909,
+      "sha256": "47f5023257c8685b1d00c32cc1df946bbc0a1bef9f91cb7315698df3f497bdbd"
+    },
+    {
+      "path": "android/app/src/main/java/com/hackathon/elevator/SevenSegReader.kt",
+      "bytes": 13766,
+      "sha256": "6f5e25427662a077162d82001786f2b5387bab05cb8255ee5568fc1e5d001391"
+    },
+    {
+      "path": "android/app/src/main/res/drawable/bg_bottom.xml",
+      "bytes": 305,
+      "sha256": "235db19b246cf8a4401d8662dbb2bde9b1779d630104be290d73eb2b6af1f426"
+    },
+    {
+      "path": "android/app/src/main/res/drawable/bg_floor_display.xml",
+      "bytes": 390,
+      "sha256": "71eca90693631556acf4b7850ce677f11acf45c35ee864479e8713ef4f55aa8e"
+    },
+    {
+      "path": "android/app/src/main/res/drawable/bg_floor_normal.xml",
+      "bytes": 308,
+      "sha256": "0e5360c191e28b007c27cb4763f22f4b83b5866517f36cc5a119a56871571dcc"
+    },
+    {
+      "path": "android/app/src/main/res/drawable/bg_floor_selected.xml",
+      "bytes": 312,
+      "sha256": "ce6ccc427eb617550ac3a0b33fbb2343de5eeddaa5c8d1876befa4e56d1faeb0"
+    },
+    {
+      "path": "android/app/src/main/res/drawable/bg_guide_box.xml",
+      "bytes": 451,
+      "sha256": "7fd38e72d167fe9307525bc0f5aa4bc6b2f455fd2ef7d77a7ddfc48107f9476c"
+    },
+    {
+      "path": "android/app/src/main/res/drawable/bg_hint.xml",
+      "bytes": 228,
+      "sha256": "49d723973259c15bf73f570312081682901f019287f9ca25363605c587646030"
+    },
+    {
+      "path": "android/app/src/main/res/drawable/bg_mock_card.xml",
+      "bytes": 395,
+      "sha256": "a3351c349bcc15aa857197287b2426128e00dc11660608c5d124eb5c529fc145"
+    },
+    {
+      "path": "android/app/src/main/res/drawable/bg_mock_fab.xml",
+      "bytes": 311,
+      "sha256": "35eecd8f9d8913cc87c1326dc9c051e53b618e8dc61c1ef341c1c6c8dc566d66"
+    },
+    {
+      "path": "android/app/src/main/res/drawable/bg_pill.xml",
+      "bytes": 307,
+      "sha256": "d4af7cd5f69b4032242501eb89c9a7ed8142ff19f06f110c7fe18a34957b1e56"
+    },
+    {
+      "path": "android/app/src/main/res/drawable/dot_green.xml",
+      "bytes": 184,
+      "sha256": "63a4bb0d2e9305d7331173ecff7edc961da3723eb3fa9c7456283833c1c283d5"
+    },
+    {
+      "path": "android/app/src/main/res/drawable/dot_red.xml",
+      "bytes": 181,
+      "sha256": "750cf1ab8ea6e89db4625ab5bc1a303446a26a24ef4306f691baec1326ddfb01"
+    },
+    {
+      "path": "android/app/src/main/res/drawable/ic_launcher.xml",
+      "bytes": 774,
+      "sha256": "4b87998954da8495136d12926e9eec5b0f944b35f3360a4a5f1086b55ee989b1"
+    },
+    {
+      "path": "android/app/src/main/res/layout/activity_camera.xml",
+      "bytes": 7845,
+      "sha256": "14edb2132bbd7c4ce546b618bef71a369124a8f8a09086634c19802cf310a63d"
+    },
+    {
+      "path": "android/app/src/main/res/layout/activity_main.xml",
+      "bytes": 10826,
+      "sha256": "db1f9d14f3f6ef8dd2a1d2c6be68ec2f7c1353ef46521c51c74c6daddbd4ffb6"
+    },
+    {
+      "path": "android/app/src/main/res/layout/activity_nav_mock.xml",
+      "bytes": 20792,
+      "sha256": "f1b7abb3e7ad8a2e4e2e61450dc3937871bd49ae692374bf08476577ffd22efc"
+    },
+    {
+      "path": "android/app/src/main/res/values/colors.xml",
+      "bytes": 1424,
+      "sha256": "5315df6ad88745f9297850bffffbf8798b0c40ebd2d9d2b13f6d964c201a67cc"
+    },
+    {
+      "path": "android/app/src/main/res/values/strings.xml",
+      "bytes": 3531,
+      "sha256": "40b144526de1999550888906b689ab745ccd20d10ed47d35b5ca238d04041062"
+    },
+    {
+      "path": "android/app/src/main/res/values/themes.xml",
+      "bytes": 1295,
+      "sha256": "ea90b3f0b60ab8ca62b86ad850fb13659d255af51c5f81ae04705917e358f841"
+    },
+    {
+      "path": "android/gradle/wrapper/gradle-wrapper.jar",
+      "bytes": 43453,
+      "sha256": "cb0da6751c2b753a16ac168bb354870ebb1e162e9083f116729cec9c781156b8"
+    },
+    {
+      "path": "android/gradle/wrapper/gradle-wrapper.properties",
+      "bytes": 250,
+      "sha256": "712d9bc912d4b0d42b0faf8c6afeed13ae31ced75ca28463b1dfc4ced1a4bc9a"
+    },
+    {
+      "path": "firmware/chime_node/chime_node.ino",
+      "bytes": 11344,
+      "sha256": "bbf8ad7d9ba5cda6445dc01889697119d8372c587126660017fa9e7f797b8b08"
+    },
+    {
+      "path": "firmware/elevator_1F/elevator_1F.ino",
+      "bytes": 17934,
+      "sha256": "0360f15d6582dab8fad5ffb5275b4da915296c2b795b29d4a46f8174af7a5c61"
+    },
+    {
+      "path": "firmware/elevator_2F/elevator_2F.ino",
+      "bytes": 17934,
+      "sha256": "a7ef2995f77e258b0add206c74968e7dd8b687a7e2e83f80e70e48da4d9f07a1"
+    }
+  ]
+}

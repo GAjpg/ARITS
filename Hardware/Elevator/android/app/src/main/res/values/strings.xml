@@ -1,0 +1,52 @@
+<resources>
+    <string name="app_name">电梯呼叫</string>
+    <string name="subtitle">甲梯跟着你走 · 乙梯是另一台（模拟）· 点 1F/2F + ▲▼ 呼梯</string>
+
+    <string name="detecting">正在检测楼层…</string>
+    <string name="floor_none">--</string>
+    <string name="not_connected">未连接装置 · 请靠近电梯装置并允许蓝牙</string>
+    <string name="hint_not_connected">还没连上装置，指令未发出</string>
+
+    <string name="arrow_up">▲</string>
+    <string name="arrow_down">▼</string>
+
+    <!-- ===== 队友导航 App「效果模拟页」 ===== -->
+    <string name="mock_title">队友导航 App · 最终页面效果</string>
+    <string name="mock_car_label">电梯现在在</string>
+    <string name="mock_sim_badge">甲梯跟着你 · 乙梯自动跑</string>
+    <string name="mock_call">呼梯</string>
+    <string name="mock_expand_hint">← 按住向左滑，进电梯大屏</string>
+    <string name="mock_sim_note">模拟开关（真机上“你在哪层”来自蓝牙，轿厢位置来自摄像头）</string>
+    <string name="mock_label_you">你在</string>
+    <string name="mock_label_dest">要去</string>
+    <string name="mock_label_car_a">甲梯</string>
+    <string name="mock_label_car_b">乙梯</string>
+    <string name="mock_auto">乙梯自动</string>
+    <string name="mock_entry">队友 App 效果 ▶</string>
+    <string name="mock_activity_label">队友导航App效果</string>
+
+    <!-- ===== 大屏：电梯呼叫（向左拖出来的全屏页，照主界面做的） ===== -->
+    <string name="mock_big_back">← 地图</string>
+    <string name="mock_big_title">电梯呼叫</string>
+    <string name="mock_big_subtitle">甲梯跟着你走，乙梯随便跑 · 有真读数就是真实值</string>
+    <!-- ===== 摄像头读楼层（方案 D） ===== -->
+    <string name="cam_entry">摄像头读楼层</string>
+    <string name="cam_title">摄像头读电梯楼层</string>
+    <string name="cam_subtitle">把这部手机当成电梯前的"监控摄像头"：屏幕上的数字放进虚线框，它就一直读，别的页面跟着显示（这一页开着时，屏幕不会自动关）</string>
+    <string name="cam_slot_a">甲</string>
+    <string name="cam_activity_label">摄像头读楼层</string>
+    <string name="cam_back">返回</string>
+    <string name="cam_opening">正在打开摄像头…</string>
+    <string name="cam_warming_up">对上了，正在看…（稳住别抖）</string>
+    <string name="cam_need_permission">没有摄像头权限，读不了楼层（到系统设置里给一下）</string>
+    <string name="cam_open_failed">摄像头打不开，可能被别的 App 占用了</string>
+    <string name="cam_no_red">画面里没看到红字：对准电梯屏、靠近一点</string>
+    <string name="cam_no_digit">看到红点了，但没拼成数字：再近一点、别抖</string>
+    <string name="cam_unsure">看到像 %1$s，但不敢确定（吻合度 %2$s / 第二 %3$s）</string>
+    <string name="cam_ok">✓ 已读到 %1$s（已作为轿厢位置）</string>
+    <string name="cam_learn_title">现场教一下（读不准时手动指一层：先点甲/乙选哪台电梯，再点楼层）</string>
+    <string name="cam_pinned">已手动指定 %1$s · 摄像头读数暂停</string>
+    <string name="cam_pinned_toast">已手动指定 %1$s</string>
+    <string name="cam_auto">恢复自动识别</string>
+    <string name="cam_auto_restored">已恢复自动识别</string>
+</resources>

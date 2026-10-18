@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 取景准星框：虚线，让用户把电梯屏上那串红色数字框进来 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#12000000" />
+    <stroke
+        android:width="2dp"
+        android:color="#CC5BE7A0"
+        android:dashGap="7dp"
+        android:dashWidth="11dp" />
+    <corners android:radius="12dp" />
+</shape>

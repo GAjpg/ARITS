@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 深色主题 -->
+    <color name="bg">#0A1220</color>
+    <color name="panel">#0F1B29</color>
+    <color name="pill_bg">#121E2E</color>
+    <color name="floor_bg">#16283C</color>
+    <color name="line">#2A4763</color>
+    <color name="call_bg">#22314A</color>
+
+    <color name="text_primary">#E6EEF5</color>
+    <color name="text_secondary">#8FA6BC</color>
+
+    <color name="accent">#2E9E5B</color>
+    <color name="accent_dim">#123A22</color>
+
+    <color name="red">#FF5252</color>
+
+    <!-- 楼层大字显示（像真实电梯的层显） -->
+    <color name="display_bg">#0B1622</color>
+    <color name="display_border">#1E3A54</color>
+    <color name="display_digit">#5BE7A0</color>
+    <color name="display_dim">#2C4257</color>
+
+    <color name="hint_bg">#DCE3EA</color>
+    <color name="hint_text">#16232F</color>
+
+    <!-- ===== 队友导航 App「效果模拟页」用色 ===== -->
+    <!-- 假地图背景（上浅下深） -->
+    <color name="map_top">#0C1626</color>
+    <color name="map_bottom">#060B13</color>
+    <!-- 悬浮卡片：半透明深色 -->
+    <color name="mock_card">#E60F1B29</color>
+    <color name="mock_card_line">#2A4763</color>
+    <color name="mock_panel_bg">#F20F1B29</color>
+    <!-- 地图上的路线 / "你在这里" -->
+    <color name="route_line">#2E9E5B</color>
+    <color name="you_here">#4C8DFF</color>
+</resources>

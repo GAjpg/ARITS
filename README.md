@@ -14,6 +14,7 @@ ARITS 是面向上海科技大学的 AR 导航与交互工具集，整合校园�
 - `Assets/Outdoor/campus.json`：OpenStreetMap 校园底图。
 - `Viewer/`：本地点云查看、通行空间校准和校园地图编辑。
 - `Tools/`：构建、回放、验证及共享 Swift 空间路线工具。
+- `Hardware/Elevator/`：本队电梯交互硬件成员提供的 Android App 与 ESP32 固件源码。
 
 ## iOS
 
@@ -42,10 +43,16 @@ python3 -m venv .venv
 .venv/bin/python -m unittest discover -s Viewer -p 'test_*.py'
 ```
 
+## 电梯交互硬件与独立 App
+
+[电梯交互源码](Hardware/Elevator/)包含独立 Android App、1F／2F ESP32 呼梯板和可选到站提示节点。原始文件保持内容不变；交接包标记 App v12、固件 v8。
+
+请先阅读[原始说明](Hardware/Elevator/README.md)和[导入与构建注意](Hardware/Elevator/IMPORT-NOTES.md)。Android 工程内固定的 Windows JDK 路径需要按本机构建环境调整；可选到站提示节点仍是未实测原型。新增源码不表示其所有功能已接入 iOS。
+
 ## 版本范围
 
 本仓库以 2026-10-18 导出的当前源码快照建立，不包含原开发仓库的提交历史、分支和标签。保留了当前 App 构建需要的工作区源码。已从这份源码副本验证：Swift 299 项、Python 工具 31 项、Viewer 35 项通过，iOS 未签名构建通过；这些检查不是现场定位准确率证明。
 
-不包含参赛说明文档审核稿、旧 APK、反编译文件、现场扫描与照片日志、构建缓存、虚拟环境及签名材料。室内地图和电梯装置需另行采集或配置。此快照不包含独立安卓工程或 ESP32 固件。
+不包含参赛说明文档审核稿、旧 APK、反编译文件、现场扫描与照片日志、构建缓存、虚拟环境及签名材料。室内地图和电梯装置需另行采集或配置。电梯交互的独立 Android App 与 ESP32 固件位于 `Hardware/Elevator/`；校园室外导航的独立安卓工程未收录。
 
 第三方来源与许可见 `THIRD_PARTY_NOTICES.md`。本队自研代码的对外发布许可尚未指定，第三方许可不受影响。

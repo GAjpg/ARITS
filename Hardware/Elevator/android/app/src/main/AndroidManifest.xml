@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 需要支持 BLE 的手机 -->
+    <uses-feature
+        android:name="android.hardware.bluetooth_le"
+        android:required="true" />
+
+    <!-- Android 12 以下：经典蓝牙 + 扫描需要定位权限 -->
+    <uses-permission
+        android:name="android.permission.BLUETOOTH"
+        android:maxSdkVersion="30" />
+    <uses-permission
+        android:name="android.permission.BLUETOOTH_ADMIN"
+        android:maxSdkVersion="30" />
+    <uses-permission
+        android:name="android.permission.ACCESS_FINE_LOCATION"
+        android:maxSdkVersion="30" />
+
+    <!-- Android 12 及以上：新的蓝牙权限 -->
+    <uses-permission
+        android:name="android.permission.BLUETOOTH_SCAN"
+        android:usesPermissionFlags="neverForLocation" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+
+    <!-- 摄像头读楼层（方案 D）：用手机自己的相机读电梯屏上的数字 -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera.autofocus"
+        android:required="false" />
+
+    <!-- 局域网 HTTP 接口：让队友导航 App(或其它设备)能调用本 App -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.ElevatorRemote">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- 队友导航 App「最终页面效果」模拟页：只从主界面点进去，不对外 -->
+        <activity
+            android:name=".NavMockActivity"
+            android:exported="false"
+            android:label="@string/mock_activity_label" />
+
+        <!-- 摄像头读楼层（方案 D）：只从主界面点进去，不对外 -->
+        <activity
+            android:name=".CameraFloorActivity"
+            android:exported="false"
+            android:label="@string/cam_activity_label"
+            android:screenOrientation="portrait" />
+    </application>
+</manifest>

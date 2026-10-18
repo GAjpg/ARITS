@@ -1,0 +1,548 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  队友导航 App「最终页面效果」模拟页。
+
+  这一页**不是**我们的主 App，而是用来演示"队友那个 iOS 导航 App 最后长什么样"：
+    · 全屏假地图 / AR（NavMapView 画的，纯装饰）
+    · 顶部一张悬浮卡：**电梯现在在几层**（这是用户最想看的那一条）
+    · 右侧一个绿色悬浮圆钮，两个作用：
+        · **直接点** = 呼梯（按你要去的方向按对应按键）
+        · **按住向左拖** = 进全屏大屏（电梯呼叫页：两台井道 + 层显 + 楼层键 + ▲▼）
+    · 底部一排"模拟开关"：没有硬件的时候，用它手动摆出各种状态
+
+  大屏里的轿厢位置：**摄像头读到了就显示真实值**（标"真"），没读到就是模拟值。
+  ⚠️ 页面上凡是模拟出来的数据都标了"模拟"。
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/mockRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg"
+    android:fitsSystemWindows="true">
+
+    <!-- 1) 假地图 / AR 画面 -->
+    <com.hackathon.elevator.NavMapView
+        android:id="@+id/navMap"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- 2) 顶部悬浮卡：电梯现在在几层（大字） -->
+    <LinearLayout
+        android:id="@+id/topCard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|center_horizontal"
+        android:layout_marginTop="14dp"
+        android:background="@drawable/bg_mock_card"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingStart="24dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="24dp"
+        android:paddingBottom="11dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/mock_title"
+            android:textColor="@color/text_secondary"
+            android:textSize="11sp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/mock_car_label"
+                android:textColor="@color/text_secondary"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/carFloor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:includeFontPadding="false"
+                android:text="@string/floor_none"
+                android:textColor="@color/display_digit"
+                android:textSize="46sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/carNote"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="@string/mock_sim_badge"
+            android:textColor="@color/text_secondary"
+            android:textSize="11sp" />
+    </LinearLayout>
+
+    <!-- 3) 右侧悬浮呼梯圆钮（默认显示） -->
+    <LinearLayout
+        android:id="@+id/fab"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center_vertical|end"
+        android:layout_marginEnd="14dp"
+        android:background="@drawable/bg_mock_fab"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/fabArrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:includeFontPadding="false"
+            android:text="@string/arrow_up"
+            android:textColor="#FFFFFF"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/fabFloor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:includeFontPadding="false"
+            android:text="@string/floor_none"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/mock_call"
+            android:textColor="#D9FFF0"
+            android:textSize="10sp" />
+    </LinearLayout>
+
+    <!-- 3b) 圆钮左边的操作提示 -->
+    <TextView
+        android:id="@+id/expandHint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|end"
+        android:layout_marginEnd="106dp"
+        android:background="@drawable/bg_hint"
+        android:paddingStart="10dp"
+        android:paddingTop="5dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="5dp"
+        android:text="@string/mock_expand_hint"
+        android:textColor="@color/hint_text"
+        android:textSize="11sp" />
+
+    <!-- 4) 向左拖出来的**全屏大屏**：电梯呼叫（照主界面做的，两台电梯都在这一页） -->
+    <LinearLayout
+        android:id="@+id/bigPage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bg"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <!-- 顶栏：返回 + 标题 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginEnd="14dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/bigBack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_pill"
+                android:clickable="true"
+                android:focusable="true"
+                android:paddingStart="13dp"
+                android:paddingTop="7dp"
+                android:paddingEnd="13dp"
+                android:paddingBottom="7dp"
+                android:text="@string/mock_big_back"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/mock_big_title"
+                android:textColor="@color/text_primary"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <!-- 占位，让标题真正居中 -->
+            <View
+                android:layout_width="64dp"
+                android:layout_height="1dp" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="center"
+            android:text="@string/mock_big_subtitle"
+            android:textColor="@color/text_secondary"
+            android:textSize="11sp" />
+
+        <!-- 层显：甲梯 / 乙梯 **一样大** -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/bg_floor_display"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingStart="20dp"
+                android:paddingTop="8dp"
+                android:paddingEnd="20dp"
+                android:paddingBottom="8dp">
+
+                <TextView
+                    android:id="@+id/bigFloorA"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:includeFontPadding="false"
+                    android:letterSpacing="0.06"
+                    android:text="@string/floor_none"
+                    android:textColor="@color/display_digit"
+                    android:textSize="56sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_floor_display"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingStart="20dp"
+                android:paddingTop="8dp"
+                android:paddingEnd="20dp"
+                android:paddingBottom="8dp">
+
+                <TextView
+                    android:id="@+id/bigFloorB"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:includeFontPadding="false"
+                    android:letterSpacing="0.06"
+                    android:text="@string/floor_none"
+                    android:textColor="@color/display_digit"
+                    android:textSize="56sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 两台井道并排，轿厢跟着实际楼层走 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="6dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <com.hackathon.elevator.ElevatorView
+                    android:id="@+id/shaftA"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top|center_horizontal"
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/bg_pill"
+                    android:paddingStart="11dp"
+                    android:paddingTop="4dp"
+                    android:paddingEnd="11dp"
+                    android:paddingBottom="4dp"
+                    android:text="@string/mock_label_car_a"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="11sp" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <com.hackathon.elevator.ElevatorView
+                    android:id="@+id/shaftB"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top|center_horizontal"
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/bg_pill"
+                    android:paddingStart="11dp"
+                    android:paddingTop="4dp"
+                    android:paddingEnd="11dp"
+                    android:paddingBottom="4dp"
+                    android:text="@string/mock_label_car_b"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="11sp" />
+            </FrameLayout>
+        </LinearLayout>
+
+        <!-- 呼叫目标楼层 -->
+        <LinearLayout
+            android:id="@+id/bigFloorRow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal" />
+
+        <!-- 上行 / 下行：点一下 = 呼梯（模拟） -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/bigUp"
+                android:layout_width="76dp"
+                android:layout_height="76dp"
+                android:backgroundTint="@color/call_bg"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:text="@string/arrow_up"
+                android:textColor="#FFFFFF"
+                android:textSize="26sp"
+                app:cornerRadius="38dp" />
+
+            <Space
+                android:layout_width="40dp"
+                android:layout_height="1dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/bigDown"
+                android:layout_width="76dp"
+                android:layout_height="76dp"
+                android:backgroundTint="@color/call_bg"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:text="@string/arrow_down"
+                android:textColor="#FFFFFF"
+                android:textSize="26sp"
+                app:cornerRadius="38dp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/bigBottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_bottom"
+            android:gravity="center"
+            android:paddingStart="14dp"
+            android:paddingTop="11dp"
+            android:paddingEnd="14dp"
+            android:paddingBottom="11dp"
+            android:textColor="@color/text_secondary"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <!-- 5) 底部：模拟开关 -->
+    <LinearLayout
+        android:id="@+id/simBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/bg_mock_card"
+        android:orientation="vertical"
+        android:paddingStart="12dp"
+        android:paddingTop="9dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="9dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/mock_sim_note"
+            android:textColor="@color/text_secondary"
+            android:textSize="10sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="34dp"
+                android:layout_height="wrap_content"
+                android:text="@string/mock_label_you"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/pillYou1"
+                style="@style/MockPill"
+                android:text="1F" />
+
+            <TextView
+                android:id="@+id/pillYou2"
+                style="@style/MockPill"
+                android:text="2F" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="34dp"
+                android:layout_height="wrap_content"
+                android:text="@string/mock_label_dest"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/pillDest1"
+                style="@style/MockPill"
+                android:text="B" />
+
+            <TextView
+                android:id="@+id/pillDest2"
+                style="@style/MockPill"
+                android:text="1F" />
+
+            <TextView
+                android:id="@+id/pillDest3"
+                style="@style/MockPill"
+                android:text="2F" />
+
+            <TextView
+                android:id="@+id/pillDest4"
+                style="@style/MockPill"
+                android:text="3F" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="34dp"
+                android:layout_height="wrap_content"
+                android:text="@string/mock_label_car_a"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/pillCar1"
+                style="@style/MockPill"
+                android:text="B" />
+
+            <TextView
+                android:id="@+id/pillCar2"
+                style="@style/MockPill"
+                android:text="1F" />
+
+            <TextView
+                android:id="@+id/pillCar3"
+                style="@style/MockPill"
+                android:text="2F" />
+
+            <TextView
+                android:id="@+id/pillCar4"
+                style="@style/MockPill"
+                android:text="3F" />
+
+            <TextView
+                android:id="@+id/pillAuto"
+                style="@style/MockPill"
+                android:layout_marginStart="6dp"
+                android:text="@string/mock_auto" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="34dp"
+                android:layout_height="wrap_content"
+                android:text="@string/mock_label_car_b"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/pillCarB1"
+                style="@style/MockPill"
+                android:text="B" />
+
+            <TextView
+                android:id="@+id/pillCarB2"
+                style="@style/MockPill"
+                android:text="1F" />
+
+            <TextView
+                android:id="@+id/pillCarB3"
+                style="@style/MockPill"
+                android:text="2F" />
+
+            <TextView
+                android:id="@+id/pillCarB4"
+                style="@style/MockPill"
+                android:text="3F" />
+        </LinearLayout>
+    </LinearLayout>
+
+</FrameLayout>
